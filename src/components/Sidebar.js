@@ -2,16 +2,21 @@ import React from "react";
 import styled from "styled-components";
 import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
 import AddIcon from "@material-ui/icons/Add";
-import { sidebarItems, channels } from "../data/SidebarData";
+import { sidebarItems } from "../data/SidebarData";
 import { useStateValue } from "../StateProvider";
+import db from "../firebase";
 
-function Sidebar() {
+function Sidebar({ rooms }) {
   const [theme] = useStateValue();
   const MainChannelItem = styled.div`
     color: ${theme.theme === "ochin"
       ? "white"
       : theme.theme === "dark"
       ? "white"
+      : theme.theme === "crystal"
+      ? "black"
+      : theme.theme === "sweettreat"
+      ? "#4A154B"
       : "rgb(188, 171, 188)"};
     display: grid;
     grid-template-columns: 15% auto;
@@ -25,9 +30,14 @@ function Sidebar() {
         ? "#6698C8"
         : theme.theme === "dark"
         ? "#1264A3"
+        : theme.theme === "crystal"
+        ? "white"
+        : theme.theme === "sweettreat"
+        ? "#FFFFFF"
         : "#350D36"};
     }
   `;
+  // rgba(21,24,52,0.1)
 
   const Channel = styled.div`
     height: 28px;
@@ -40,6 +50,10 @@ function Sidebar() {
         ? "#6698C8"
         : theme.theme === "dark"
         ? "#1264A3"
+        : theme.theme === "crystal"
+        ? "white"
+        : theme.theme === "sweettreat"
+        ? "#FFFFFF"
         : "#350D36"};
     }
   `;
@@ -49,8 +63,11 @@ function Sidebar() {
       ? "white"
       : theme.theme === "dark"
       ? "white"
+      : theme.theme === "crystal"
+      ? "black"
+      : theme.theme === "sweettreat"
+      ? "#4A154B"
       : "rgb(188, 171, 188)"};
-    margin-left: 10px;
   `;
 
   const NewChannelContainer = styled.div`
@@ -65,17 +82,35 @@ function Sidebar() {
       ? "white"
       : theme.theme === "dark"
       ? "white"
+      : theme.theme === "crystal"
+      ? "black"
+      : theme.theme === "sweettreat"
+      ? "#4A154B"
       : "rgb(188, 171, 188)"};
   `;
+
+  const addChannel = () => {
+    const promptName = prompt("Enter Channel Name");
+
+    if (promptName) {
+      db.collection("rooms").add({
+        name: promptName,
+      });
+    }
+  };
 
   return (
     <Container
       style={{
-        backgroundColor:
+        background:
           theme.theme === "dark"
             ? "#19171D"
             : theme.theme === "ochin"
             ? "#2C3849"
+            : theme.theme === "crystal"
+            ? "rgba(21,24,52,0.1)"
+            : theme.theme === "sweettreat"
+            ? "#FFEEED"
             : "#3f0e40",
       }}
     >
@@ -86,7 +121,18 @@ function Sidebar() {
               ? "0.1px solid #2C3849"
               : theme.theme === "ochin"
               ? "0.1px solid gray"
+              : theme.theme === "crystal"
+              ? "0.1px solid gray"
+              : theme.theme === "sweettreat"
+              ? "0.1px solid lightgray"
               : "#3f0e40",
+
+          color:
+            theme.theme === "crystal"
+              ? "black"
+              : theme.theme === "sweettreat"
+              ? "#4A154B"
+              : "white",
         }}
       >
         <Name>Patel Pradhuman</Name>
@@ -98,6 +144,8 @@ function Sidebar() {
                   ? "#19171D"
                   : theme.theme === "ochin"
                   ? "#2C3849"
+                  : theme.theme === "sweettreat"
+                  ? "#4A154B"
                   : "#3f0e40",
             }}
           />
@@ -120,12 +168,12 @@ function Sidebar() {
       <ChannelsContainer>
         <NewChannelContainer>
           <div>Channels</div>
-          <AddIcon />
+          <AddIcon onClick={addChannel} />
         </NewChannelContainer>
 
         <ChannelsList>
-          {channels.map((channel) => (
-            <Channel># &nbsp;&nbsp;&nbsp;{channel.text}</Channel>
+          {rooms?.map((channel) => (
+            <Channel># &nbsp;{channel.name}</Channel>
           ))}
         </ChannelsList>
       </ChannelsContainer>
@@ -170,5 +218,5 @@ const MainChannels = styled.div`
 
 const ChannelsContainer = styled.div`
   color: rgb(188, 171, 188);
-  margin-top: 10px;
+  padding-top: 10px;
 `;

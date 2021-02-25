@@ -5,7 +5,7 @@ import AccessTimeIcon from "@material-ui/icons/AccessTime";
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import "semantic-ui-css/semantic.min.css";
 import { Dropdown, DropdownMenu } from "semantic-ui-react";
-import { Dialog, DialogContent, DialogTitle } from "@material-ui/core";
+import { Dialog, DialogContent } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import { useStateValue } from "../StateProvider";
 function Header() {
@@ -23,12 +23,18 @@ function Header() {
   return (
     <Container
       style={{
-        backgroundColor:
+        background:
           theme.theme === "dark"
             ? "#121016"
             : theme.theme === "ochin"
             ? "#2C3849"
+            : theme.theme === "crystal"
+            ? "#E7717d"
+            : theme.theme === "sweettreat"
+            ? "#FFC2C0"
             : "#3f0e40",
+
+        color: theme.theme === "sweettreat" ? "#7666A5" : "white",
       }}
     >
       <Main>
@@ -41,6 +47,8 @@ function Header() {
                   ? "rgb(59,70,86)"
                   : theme.theme === "dark"
                   ? "rgb(31,30,35)"
+                  : theme.theme === "sweettreat"
+                  ? "#F2B6B8"
                   : "",
               boxShadow:
                 theme.theme === "dark"
@@ -60,7 +68,7 @@ function Header() {
         <UserImage>
           {/* <img src="https://i.imgur.com/6VBx3io.png" alt="" /> */}
           <Dropdown
-            trigger={<img src="https://i.imgur.com/6VBx3io.png"></img>}
+            trigger={<img src="https://i.imgur.com/6VBx3io.png" alt=""></img>}
             icon={false}
           >
             <DropdownMenu direction="left">
@@ -115,6 +123,7 @@ function Header() {
                     name="color"
                     id="color"
                     onClick={() => handleTheme("light")}
+                    checked={theme.theme === "light" ? true : false}
                   />
                   <p>Aubergine</p>
                 </div>
@@ -123,7 +132,7 @@ function Header() {
                 <div
                   className="upper-part"
                   style={{
-                    backgroundColor: "black",
+                    backgroundColor: "#FFC2C0",
                     color: "white",
                     borderTopLeftRadius: "6px",
                     borderTopRightRadius: "6px",
@@ -149,9 +158,46 @@ function Header() {
                     type="radio"
                     name="color"
                     id="color"
-                    onClick={() => handleTheme("dark")}
+                    onClick={() => handleTheme("sweettreat")}
+                    checked={theme.theme === "sweettreat" ? true : false}
                   />
-                  <p>Dark</p>
+                  <p>Sweet Treat</p>
+                </div>
+              </ThemeBar>
+              <ThemeBar>
+                <div
+                  className="upper-part"
+                  style={{
+                    background: "#E7717d",
+                    color: "white",
+                    borderTopLeftRadius: "6px",
+                    borderTopRightRadius: "6px",
+                  }}
+                >
+                  <div className="img-container">
+                    <img src={SlackBot} alt="" />
+                  </div>
+
+                  <div className="text-container">
+                    <h4>Slackbot</h4>
+                    <p>You look nice today</p>
+                  </div>
+                </div>
+                <div
+                  className="lower-part"
+                  style={{
+                    borderBottomLeftRadius: "6px",
+                    borderBottomRightRadius: "6px",
+                  }}
+                >
+                  <input
+                    type="radio"
+                    name="color"
+                    id="color"
+                    onClick={() => handleTheme("crystal")}
+                    checked={theme.theme === "crystal" ? true : false}
+                  />
+                  <p>Light Pinkish</p>
                 </div>
               </ThemeBar>
               <ThemeBar>
@@ -185,8 +231,46 @@ function Header() {
                     name="color"
                     id="color"
                     onClick={() => handleTheme("ochin")}
+                    checked={theme.theme === "ochin" ? true : false}
                   />
                   <p>Ochin</p>
+                </div>
+              </ThemeBar>
+
+              <ThemeBar>
+                <div
+                  className="upper-part"
+                  style={{
+                    backgroundColor: "black",
+                    color: "white",
+                    borderTopLeftRadius: "6px",
+                    borderTopRightRadius: "6px",
+                  }}
+                >
+                  <div className="img-container">
+                    <img src={SlackBot} alt="" />
+                  </div>
+
+                  <div className="text-container">
+                    <h4>Slackbot</h4>
+                    <p>You look nice today</p>
+                  </div>
+                </div>
+                <div
+                  className="lower-part"
+                  style={{
+                    borderBottomLeftRadius: "6px",
+                    borderBottomRightRadius: "6px",
+                  }}
+                >
+                  <input
+                    type="radio"
+                    name="color"
+                    id="color"
+                    onClick={() => handleTheme("dark")}
+                    checked={theme.theme === "dark" ? true : false}
+                  />
+                  <p>Dark</p>
                 </div>
               </ThemeBar>
             </ThemeContent>

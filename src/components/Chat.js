@@ -3,12 +3,20 @@ import { useStateValue } from "../StateProvider";
 import styled from "styled-components";
 import GroupAddIcon from "@material-ui/icons/GroupAdd";
 import InfoIcon from "@material-ui/icons/Info";
+
+import ChatInput from "./ChatInput";
+import ChatMessage from "./ChatMessage";
 function Chat() {
-  const [theme, dispatch] = useStateValue();
+  const [theme] = useStateValue();
   return (
     <Container
       style={{
-        backgroundColor: theme.theme === "dark" ? "rgb(26, 29, 33)" : "white",
+        backgroundColor:
+          theme.theme === "dark"
+            ? "rgb(26, 29, 33)"
+            : theme.theme === "crystal"
+            ? "white"
+            : "white",
       }}
     >
       <ChatHeader
@@ -30,9 +38,27 @@ function Chat() {
         </Right>
         <Left style={{ color: theme.theme === "dark" ? "white" : "black" }}>
           <GroupAddIcon />
-          <InfoIcon />
+          <Info>
+            <InfoIcon />
+          </Info>
         </Left>
       </ChatHeader>
+
+      <MessageContainer>
+        <ChatMessage
+          avatar="https://randomuser.me/api/portraits/women/96.jpg"
+          name="Allena joseph"
+          message="So Pumped For The Day 5 of React Challenge "
+        />
+
+        <ChatMessage
+          avatar="https://randomuser.me/api/portraits/men/29.jpg"
+          name="Roberto Webb"
+          message="Yeah Yeah, So pumped up "
+        />
+      </MessageContainer>
+
+      <ChatInput />
     </Container>
   );
 }
@@ -41,19 +67,21 @@ export default Chat;
 
 const Container = styled.div`
   color: white;
+  display: grid;
+  grid-template-rows: 64px auto min-content;
 `;
 
 const ChatHeader = styled.div`
-  height: 64px;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid rgba(232, 232, 232, 0.13);
+  padding-left: 20px;
+  padding-right: 20px;
 `;
 
 const Right = styled.div`
-  margin-left: 20px;
-
   .channel__name {
     font-size: 15px;
     line-height: 22px;
@@ -69,7 +97,7 @@ const Right = styled.div`
     line-height: 18px;
     text-decoration: rgb(29, 155, 209);
     word-spacing: 0px;
-    color: gray;
+    color: #606060;
     cursor: pointer;
   }
 `;
@@ -80,3 +108,9 @@ const Left = styled.div`
   font-size: 22px;
   justify-content: space-between;
 `;
+
+const Info = styled(InfoIcon)`
+  font-size: 24px;
+`;
+
+const MessageContainer = styled.div``;
