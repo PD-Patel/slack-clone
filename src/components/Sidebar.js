@@ -5,9 +5,17 @@ import AddIcon from "@material-ui/icons/Add";
 import { sidebarItems } from "../data/SidebarData";
 import { useStateValue } from "../StateProvider";
 import db from "../firebase";
+import { useHistory } from "react-router-dom";
 
 function Sidebar({ rooms }) {
   const [theme] = useStateValue();
+  const history = useHistory();
+
+  const goToChannel = (id) => {
+    if (id) {
+      history.push(`/room/${id}`);
+    }
+  };
   const MainChannelItem = styled.div`
     color: ${theme.theme === "ochin"
       ? "white"
@@ -173,7 +181,9 @@ function Sidebar({ rooms }) {
 
         <ChannelsList>
           {rooms?.map((channel) => (
-            <Channel># &nbsp;{channel.name}</Channel>
+            <Channel onClick={() => goToChannel(channel.id)}>
+              # &nbsp;{channel.name}
+            </Channel>
           ))}
         </ChannelsList>
       </ChannelsContainer>

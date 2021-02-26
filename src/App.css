@@ -1,3 +1,12 @@
 * {
   margin: 0;
 }
+
+#title__to__select {
+  font-size: 24px;
+  border: 1px solid lightgray;
+  margin: 20px;
+  width: fit-content;
+  padding: 10px;
+  border-radius: 5px;
+}

@@ -5,10 +5,18 @@ import styled from "styled-components";
 import Header from "./components/Header";
 import "./App.css";
 import Sidebar from "./components/Sidebar";
-import db from "./firebase";
+import db, { auth } from "./firebase";
 import { useEffect, useState } from "react";
 function App() {
   const [rooms, setRooms] = useState([]);
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
+
+  const signOut = () => {
+    auth.signOut().then(() => {
+      setUser(null);
+      localStorage.removeItem("user");
+    });
+  };
 
   useEffect(() => {
     const getChannels = () => {
@@ -23,24 +31,32 @@ function App() {
     getChannels();
   }, []);
 
+  console.log("user>>>", user);
+
   return (
     <div className="App">
       <Router>
-        <Container>
-          <Header />
-          <Main>
-            <Sidebar rooms={rooms} />
+        {!user ? (
+          <Login setUser={setUser} />
+        ) : (
+          <Container>
+            <Header user={user} signOut={signOut} />
+            <Main>
+              <Sidebar rooms={rooms} />
 
-            <Switch>
-              <Route path="/">
-                <Chat />
-              </Route>
-              <Route path="/">
-                <Login />
-              </Route>
-            </Switch>
-          </Main>
-        </Container>
+              <Switch>
+                <Route path="/room/:channelId" exact>
+                  <Chat user={user} />
+                </Route>
+                <Route path="/">
+                  <div className="select__channel">
+                    <p id="title__to__select">Select or Create Channel</p>
+                  </div>
+                </Route>
+              </Switch>
+            </Main>
+          </Container>
+        )}
       </Router>
     </div>
   );
@@ -53,7 +69,7 @@ const Container = styled.div`
   height: 100vh;
 
   display: grid;
-  grid-template-rows: 38px auto;
+  grid-template-rows: 38px minmax(0, 1fr);
 `;
 
 const Main = styled.div`

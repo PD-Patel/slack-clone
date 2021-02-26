@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useStateValue } from "../StateProvider";
 import styled from "styled-components";
 import GroupAddIcon from "@material-ui/icons/GroupAdd";
@@ -6,8 +6,52 @@ import InfoIcon from "@material-ui/icons/Info";
 
 import ChatInput from "./ChatInput";
 import ChatMessage from "./ChatMessage";
-function Chat() {
+import db from "../firebase";
+import firebase from "firebase";
+import { useParams } from "react-router-dom";
+function Chat({ user }) {
   const [theme] = useStateValue();
+  let { channelId } = useParams();
+  const [channel, setChannel] = useState([]);
+
+  const [messages, setMessages] = useState([]);
+  const getChannel = () => {
+    db.collection("rooms")
+      .doc(channelId)
+      .onSnapshot((snapshot) => {
+        setChannel(snapshot.data());
+      });
+  };
+  const getMessages = () => {
+    db.collection("rooms")
+      .doc(channelId)
+      .collection("messages")
+      .orderBy("timestamp", "asc")
+      .onSnapshot((snapshot) => {
+        let messages = snapshot.docs.map((doc) => doc.data());
+        setMessages(messages);
+      });
+  };
+
+  const sendMessage = (messageData) => {
+    if (channelId) {
+      let payload = {
+        text: messageData.message,
+        file: messageData.files?.length > 0 ? messageData.files : [],
+        user: user?.name,
+        userimage: user?.photo,
+        timestamp: firebase.firestore.Timestamp.now(),
+      };
+
+      db.collection("rooms").doc(channelId).collection("messages").add(payload);
+    }
+  };
+
+  useEffect(() => {
+    getChannel();
+    getMessages();
+  }, [channelId]);
+
   return (
     <Container
       style={{
@@ -32,7 +76,7 @@ function Chat() {
             className="channel__name"
             style={{ color: theme.theme === "dark" ? "white" : "black" }}
           >
-            # general
+            # {channel?.name}
           </p>
           <p className="add_topic_btn">Add a topic</p>
         </Right>
@@ -45,20 +89,19 @@ function Chat() {
       </ChatHeader>
 
       <MessageContainer>
-        <ChatMessage
-          avatar="https://randomuser.me/api/portraits/women/96.jpg"
-          name="Allena joseph"
-          message="So Pumped For The Day 5 of React Challenge "
-        />
-
-        <ChatMessage
-          avatar="https://randomuser.me/api/portraits/men/29.jpg"
-          name="Roberto Webb"
-          message="Yeah Yeah, So pumped up "
-        />
+        {messages.length > 0 &&
+          messages.map((data, index) => (
+            <ChatMessage
+              avatar={data.userimage}
+              message={data.text}
+              name={data.user}
+              timestamp={data.timestamp}
+              file={data.file}
+            />
+          ))}
       </MessageContainer>
 
-      <ChatInput />
+      <ChatInput sendMessage={sendMessage} />
     </Container>
   );
 }
@@ -69,6 +112,7 @@ const Container = styled.div`
   color: white;
   display: grid;
   grid-template-rows: 64px auto min-content;
+  min-height: 0;
 `;
 
 const ChatHeader = styled.div`
@@ -113,4 +157,8 @@ const Info = styled(InfoIcon)`
   font-size: 24px;
 `;
 
-const MessageContainer = styled.div``;
+const MessageContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+`;

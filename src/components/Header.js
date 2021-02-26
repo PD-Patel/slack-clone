@@ -8,7 +8,8 @@ import { Dropdown, DropdownMenu } from "semantic-ui-react";
 import { Dialog, DialogContent } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import { useStateValue } from "../StateProvider";
-function Header() {
+
+function Header({ user, signOut }) {
   const [themeDialog, setThemeDialog] = useState(false);
   const [theme, dispatch] = useStateValue();
   const handleTheme = (color) => {
@@ -17,8 +18,6 @@ function Header() {
       theme: color,
     });
   };
-
-  console.log("theme", theme);
 
   return (
     <Container
@@ -64,11 +63,18 @@ function Header() {
         <HelpOutlineIcon />
       </Main>
       <UserContainer>
-        <Name>Pradhuman</Name>
+        <Name>{user.name}</Name>
         <UserImage>
           {/* <img src="https://i.imgur.com/6VBx3io.png" alt="" /> */}
           <Dropdown
-            trigger={<img src="https://i.imgur.com/6VBx3io.png" alt=""></img>}
+            trigger={
+              <img
+                src={
+                  user.photo ? user.photo : "https://i.imgur.com/6VBx3io.png"
+                }
+                alt=""
+              ></img>
+            }
             icon={false}
           >
             <DropdownMenu direction="left">
@@ -79,7 +85,7 @@ function Header() {
                 onClick={() => setThemeDialog(true)}
               />
               <Dropdown.Divider />
-              <Dropdown.Item text="Sign out of Hii" />
+              <Dropdown.Item text="Sign out of Hii" onClick={signOut} />
             </DropdownMenu>
           </Dropdown>
         </UserImage>
