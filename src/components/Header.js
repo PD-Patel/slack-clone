@@ -5,7 +5,7 @@ import AccessTimeIcon from "@material-ui/icons/AccessTime";
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import "semantic-ui-css/semantic.min.css";
 import { Dropdown, DropdownMenu } from "semantic-ui-react";
-import { Dialog, DialogContent } from "@material-ui/core";
+import { colors, Dialog, DialogContent } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import { useStateValue } from "../StateProvider";
 
@@ -13,9 +13,10 @@ function Header({ user, signOut }) {
   const [themeDialog, setThemeDialog] = useState(false);
   const [theme, dispatch] = useStateValue();
   const handleTheme = (color) => {
+    localStorage.setItem("theme", color);
     dispatch({
       type: "SET_THEME",
-      theme: color,
+      theme: localStorage.getItem("theme"),
     });
   };
 

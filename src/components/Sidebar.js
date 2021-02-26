@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
 import AddIcon from "@material-ui/icons/Add";
@@ -6,15 +6,28 @@ import { sidebarItems } from "../data/SidebarData";
 import { useStateValue } from "../StateProvider";
 import db from "../firebase";
 import { useHistory } from "react-router-dom";
+import { Dialog, DialogContent, DialogTitle } from "@material-ui/core";
+import CloseIcon from "@material-ui/icons/Close";
 
 function Sidebar({ rooms }) {
   const [theme] = useStateValue();
   const history = useHistory();
+  const [addChannelDialog, setAddChannelDialog] = useState(false);
+  const [channelName, setChannelName] = useState("");
+  const [topic, setTopic] = useState("");
 
   const goToChannel = (id) => {
     if (id) {
       history.push(`/room/${id}`);
     }
+  };
+
+  const addChannel = (channelName, topic) => {
+    db.collection("rooms").add({
+      name: channelName,
+      topic: topic,
+    });
+    setAddChannelDialog(false);
   };
   const MainChannelItem = styled.div`
     color: ${theme.theme === "ochin"
@@ -97,16 +110,6 @@ function Sidebar({ rooms }) {
       : "rgb(188, 171, 188)"};
   `;
 
-  const addChannel = () => {
-    const promptName = prompt("Enter Channel Name");
-
-    if (promptName) {
-      db.collection("rooms").add({
-        name: promptName,
-      });
-    }
-  };
-
   return (
     <Container
       style={{
@@ -122,6 +125,47 @@ function Sidebar({ rooms }) {
             : "#3f0e40",
       }}
     >
+      <Dialog maxWidth="xs" open={addChannelDialog}>
+        <DialogTitle>
+          <Title>
+            <p>Add New Channel</p>
+            <CloseIcon
+              onClick={() => setAddChannelDialog(false)}
+              style={{ cursor: "pointer" }}
+            />
+          </Title>
+        </DialogTitle>
+
+        <DialogContent>
+          <Content>
+            <NameChannel>
+              <p>Name of Channel</p>
+              <input
+                type="text"
+                onChange={(e) => setChannelName(e.target.value)}
+                value={channelName}
+              />
+            </NameChannel>
+
+            <Topic>
+              <p>Topic</p>
+              <input
+                type="text"
+                onChange={(e) => setTopic(e.target.value)}
+                value={topic}
+              />
+            </Topic>
+
+            <button
+              onClick={() => addChannel(channelName, topic)}
+              style={{ cursor: "pointer" }}
+            >
+              Create
+            </button>
+          </Content>
+        </DialogContent>
+      </Dialog>
+
       <WorkspacContainer
         style={{
           borderBottom:
@@ -176,7 +220,10 @@ function Sidebar({ rooms }) {
       <ChannelsContainer>
         <NewChannelContainer>
           <div>Channels</div>
-          <AddIcon onClick={addChannel} />
+          <AddIcon
+            onClick={() => setAddChannelDialog(!addChannelDialog)}
+            style={{ cursor: "pointer" }}
+          />
         </NewChannelContainer>
 
         <ChannelsList>
@@ -229,4 +276,46 @@ const MainChannels = styled.div`
 const ChannelsContainer = styled.div`
   color: rgb(188, 171, 188);
   padding-top: 10px;
+`;
+
+const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  button {
+  }
+`;
+const NameChannel = styled.div`
+  margin-bottom: 20px;
+  p {
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 5px;
+  }
+
+  input {
+    height: 30px;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+  }
+`;
+
+const Topic = styled.div`
+  margin-bottom: 20px;
+  p {
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 5px;
+  }
+
+  input {
+    height: 30px;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+  }
+`;
+
+const Title = styled.div`
+  display: flex;
+  justify-content: space-between;
 `;

@@ -78,7 +78,7 @@ function Chat({ user }) {
           >
             # {channel?.name}
           </p>
-          <p className="add_topic_btn">Add a topic</p>
+          <p className="add_topic_btn">{channel?.topic}</p>
         </Right>
         <Left style={{ color: theme.theme === "dark" ? "white" : "black" }}>
           <GroupAddIcon />

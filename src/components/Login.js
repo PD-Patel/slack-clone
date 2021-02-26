@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { auth, provider } from "../firebase";
+import logo from "../logo.png";
 function Login({ setUser }) {
   const signIn = () => {
     auth
@@ -12,13 +13,14 @@ function Login({ setUser }) {
         };
         setUser(newUser);
         localStorage.setItem("user", JSON.stringify(newUser));
+        localStorage.setItem("theme", "light");
       })
       .catch((err) => alert(err.message));
   };
   return (
     <Container>
       <Content>
-        <SlackImg src="https://assets.stickpng.com/images/5cb480cd5f1b6d3fbadece79.png"></SlackImg>
+        <SlackImg src={logo}></SlackImg>
         <h1>Sign In Slack</h1>
         <SignInButton onClick={signIn}>Sign In With Google</SignInButton>
       </Content>

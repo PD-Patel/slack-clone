@@ -1,6 +1,7 @@
 export const initialState = {
-  theme: "light",
+  theme: localStorage.getItem("theme"),
 };
+
 console.log("theme", initialState.theme);
 const reducer = (state, action) => {
   console.log("action ", action.theme);
