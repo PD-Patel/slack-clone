@@ -18,6 +18,7 @@ function ChatInput({ sendMessage }) {
   const [videoUrl, setVideoUrl] = useState([]);
   const [fileUrl, setFileUrl] = useState([]);
   const [disable, setDisable] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [messageData, setMessageData] = useState({
     message: "",
     files: [],
@@ -70,6 +71,7 @@ function ChatInput({ sendMessage }) {
     const file = e.target.files[0];
     console.log(file);
     setDisable(true);
+    setUploading(true);
     if (
       file.type === "image/png" ||
       file.type === "image/jpeg" ||
@@ -108,6 +110,7 @@ function ChatInput({ sendMessage }) {
       alert("please select image file only");
     }
     setDisable(false);
+    setUploading(false);
   };
 
   // Attached Images
@@ -179,6 +182,7 @@ function ChatInput({ sendMessage }) {
             }
             value={messageData.message}
           ></input>
+          {uploading && <p>The File is uploading</p>}
 
           {fileUrl.length > 0 && (
             <AttachFiles>
