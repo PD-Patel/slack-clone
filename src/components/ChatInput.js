@@ -3,81 +3,73 @@ import styled from "styled-components";
 import SendIcon from "@material-ui/icons/Send";
 import FlashOnIcon from "@material-ui/icons/FlashOn";
 import AttachFileIcon from "@material-ui/icons/AttachFile";
-import SentimentSatisfiedIcon from "@material-ui/icons/SentimentSatisfied";
+
 import InsertEmoticonIcon from "@material-ui/icons/InsertEmoticon";
 import AlternateEmailIcon from "@material-ui/icons/AlternateEmail";
 import Picker from "emoji-picker-react";
 import { useStateValue } from "../StateProvider";
-import db, { storage } from "../firebase";
-import logo from "../logo.png";
+import { storage } from "../firebase";
+
 function ChatInput({ sendMessage }) {
   const [theme] = useStateValue();
 
   const [emojiBoxOpen, setEmojiBoxOpen] = useState(false);
   const [attachOpen, setAttachOpen] = useState(false);
-
+  const [videoUrl, setVideoUrl] = useState([]);
   const [fileUrl, setFileUrl] = useState([]);
+  const [disable, setDisable] = useState(false);
   const [messageData, setMessageData] = useState({
     message: "",
     files: [],
+    videos: [],
   });
   const onEmojiClick = (event, emojiObject) => {
     setMessageData({
       message: messageData.message + emojiObject.emoji,
       files: fileUrl,
+      videos: videoUrl,
     });
   };
 
   const send = (e) => {
     e.preventDefault();
 
-    if (fileUrl.length === 1) {
-      setMessageData({
-        message: messageData.message,
-        files: fileUrl,
-      });
-
-      sendMessage(messageData);
-
-      setFileUrl([]);
-      setMessageData({
-        message: "",
-        files: [],
-      });
-    }
     // My slack Clone has features like emojis and you can only attach image with attach icon.
     // There is some bug in my input tag of message it doesn't work properly. Can you help me to solve the problem ?
-    if (fileUrl.length > 1) {
-      setMessageData({
-        message: messageData.message,
-        files: fileUrl,
-      });
-
+    if (fileUrl.length > 0 || videoUrl.length > 0) {
       sendMessage(messageData);
 
       setFileUrl([]);
       setMessageData({
         message: "",
         files: [],
+        videos: [],
       });
-    }
-    if (fileUrl.length === 0) {
+
+      setVideoUrl([]);
+    } else if (
+      fileUrl.length === 0 &&
+      videoUrl.length === 0 &&
+      messageData.message.length > 0
+    ) {
       setMessageData({
         message: messageData.message,
-        files: fileUrl,
       });
       sendMessage(messageData);
       setMessageData({
         message: "",
-        files: [],
       });
+
+      setVideoUrl([]);
+    } else {
+      alert("please type or attach something to send.");
     }
   };
 
   const onfileChange = async (e) => {
     const file = e.target.files[0];
     console.log(file);
-
+    setDisable(true);
     if (
       file.type === "image/png" ||
       file.type === "image/jpeg" ||
@@ -90,12 +82,34 @@ function ChatInput({ sendMessage }) {
       setFileUrl((files) => [...files, link]);
       await setMessageData({
         message: messageData.message,
-        files: [...messageData.files, link],
+        files: [...fileUrl, link],
+        videos: messageData.videos,
       });
+    } else if (
+      file.type === "video/mp4" ||
+      file.type === "video/webm" ||
+      file.type === "video/avi" ||
+      file.type === "video/mov" ||
+      file.type === "video/wmv" ||
+      file.type === "video/webp"
+    ) {
+      const storageRef = storage.ref();
+      const fileRef = storageRef.child(file.name);
+      await fileRef.put(file);
+      const link = await fileRef.getDownloadURL();
+      setVideoUrl((videoUrl) => [...videoUrl, link]);
+      await setMessageData({
+        message: messageData.message,
+        videos: [...videoUrl, link],
+        files: messageData.files,
+      });
+      console.log(messageData);
     } else {
       alert("please select image file only");
     }
+    setDisable(false);
   };
+
   // Attached Images
 
   const InputContainer = styled.div`
@@ -144,15 +158,15 @@ function ChatInput({ sendMessage }) {
           className="attach__file"
           type="file"
           title=""
-          accept="image/*"
+          accept="image/*,video/mp4"
           onChange={(e) => {
             onfileChange(e);
             setAttachOpen(!attachOpen);
           }}
-        />
+        ></input>
       )}
       <InputContainer>
-        <form>
+        <form onSubmit={send}>
           <input
             type="text"
             placeholder="Send a message"
@@ -160,16 +174,27 @@ function ChatInput({ sendMessage }) {
               setMessageData({
                 message: e.target.value,
                 files: fileUrl,
+                videos: videoUrl,
               })
             }
             value={messageData.message}
-          />
+          ></input>
 
           {fileUrl.length > 0 && (
             <AttachFiles>
               {fileUrl?.map((url) => (
                 <Content>
                   <img src={url} alt="" />
+                </Content>
+              ))}
+            </AttachFiles>
+          )}
+
+          {videoUrl.length > 0 && (
+            <AttachFiles>
+              {videoUrl?.map((url) => (
+                <Content>
+                  <video src={url} alt="" width="100%" autoPlay />
                 </Content>
               ))}
             </AttachFiles>
@@ -193,7 +218,7 @@ function ChatInput({ sendMessage }) {
             <Attach />
           </AttachButton>
 
-          <SendButton type="submit" onClick={send}>
+          <SendButton type="submit" onClick={send} disabled={disable}>
             <Send />
           </SendButton>
         </RightSideButtons>
@@ -214,6 +239,7 @@ const Container = styled.div`
   margin-right: 20px;
   border-radius: 8px;
   height: fit-content;
+  box-shadow: 0 1px 10px 10px rgb(0 0 0/ 12%), 0 1px 2px rgb(0 0 0/ 24%);
 
   position: relative;
   .emoji-picker-react {
@@ -224,7 +250,7 @@ const Container = styled.div`
   .attach__file {
     position: absolute;
     right: 10px;
-    bottom: 50px;
+    bottom: 70px;
     width: 120px;
     color: transparent;
     display: flex;
@@ -248,7 +274,7 @@ const Content = styled.div`
     width: 100%;
   }
 `;
-
+// you have to wait for some time to upload image
 const ButtonContainer = styled.div`
   display: flex;
   padding-top: 10px;

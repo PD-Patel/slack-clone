@@ -38,6 +38,7 @@ function Chat({ user }) {
       let payload = {
         text: messageData.message,
         file: messageData.files?.length > 0 ? messageData.files : [],
+        videos: messageData.videos?.length > 0 ? messageData.videos : [],
         user: user?.name,
         userimage: user?.photo,
         timestamp: firebase.firestore.Timestamp.now(),
@@ -97,6 +98,7 @@ function Chat({ user }) {
               name={data.user}
               timestamp={data.timestamp}
               file={data.file}
+              videos={data.videos}
             />
           ))}
       </MessageContainer>

@@ -5,7 +5,7 @@ import AccessTimeIcon from "@material-ui/icons/AccessTime";
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import "semantic-ui-css/semantic.min.css";
 import { Dropdown, DropdownMenu } from "semantic-ui-react";
-import { colors, Dialog, DialogContent } from "@material-ui/core";
+import { Dialog, DialogContent } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import { useStateValue } from "../StateProvider";
 
@@ -86,7 +86,7 @@ function Header({ user, signOut }) {
                 onClick={() => setThemeDialog(true)}
               />
               <Dropdown.Divider />
-              <Dropdown.Item text="Sign out of Hii" onClick={signOut} />
+              <Dropdown.Item text="Sign out of Slack" onClick={signOut} />
             </DropdownMenu>
           </Dropdown>
         </UserImage>

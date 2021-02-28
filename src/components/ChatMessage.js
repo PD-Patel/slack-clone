@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { useStateValue } from "../StateProvider";
-function ChatMessage({ name, message, avatar, timestamp, file }) {
+function ChatMessage({ name, message, avatar, timestamp, file, videos }) {
   const [theme] = useStateValue();
 
   const Container = styled.div`
@@ -45,6 +45,16 @@ function ChatMessage({ name, message, avatar, timestamp, file }) {
             file.map((f) => (
               <Content>
                 <img src={f} alt="something went wrong" />
+              </Content>
+            ))}
+        </FileContent>
+      )}
+      {videos.length > 0 && (
+        <FileContent>
+          {videos.length > 0 &&
+            videos.map((f) => (
+              <Content>
+                <video src={f} width="400px" height="300px" controls></video>
               </Content>
             ))}
         </FileContent>

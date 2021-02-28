@@ -8,6 +8,7 @@ import db from "../firebase";
 import { useHistory } from "react-router-dom";
 import { Dialog, DialogContent, DialogTitle } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
+import DeleteIcon from "@material-ui/icons/Delete";
 
 function Sidebar({ rooms }) {
   const [theme] = useStateValue();
@@ -22,11 +23,22 @@ function Sidebar({ rooms }) {
     }
   };
 
+  const deleteChannel = (id) => {
+    if (id === "BJ6mdPmZHwf10te4lGlo") {
+      alert("You doesn't have right to delete this channel, Sorry");
+    } else {
+      db.collection("rooms").doc(id).delete();
+      history.replace("/room");
+    }
+  };
+
   const addChannel = (channelName, topic) => {
     db.collection("rooms").add({
       name: channelName,
       topic: topic,
     });
+    setChannelName("");
+    setTopic("");
     setAddChannelDialog(false);
   };
   const MainChannelItem = styled.div`
@@ -65,7 +77,12 @@ function Sidebar({ rooms }) {
     display: flex;
     align-items: center;
     padding-left: 19px;
+    justify-content: space-between;
     cursor: pointer;
+
+    p {
+      margin-top: 10px;
+    }
     :hover {
       background: ${theme.theme === "ochin"
         ? "#6698C8"
@@ -76,6 +93,11 @@ function Sidebar({ rooms }) {
         : theme.theme === "sweettreat"
         ? "#FFFFFF"
         : "#350D36"};
+    }
+
+    .MuiSvgIcon-root {
+      cursor: pointer;
+      margin-right: 10px !important;
     }
   `;
 
@@ -228,8 +250,9 @@ function Sidebar({ rooms }) {
 
         <ChannelsList>
           {rooms?.map((channel) => (
-            <Channel onClick={() => goToChannel(channel.id)}>
-              # &nbsp;{channel.name}
+            <Channel>
+              <p onClick={() => goToChannel(channel.id)}># {channel.name}</p>
+              <DeleteIcon onClick={() => deleteChannel(channel.id)} />
             </Channel>
           ))}
         </ChannelsList>
@@ -282,7 +305,14 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 20px;
   button {
+    width: 150px;
+    height: 30px;
+    background-color: #1264a3;
+    border: none;
+    color: white;
+    border-radius: 5px;
   }
 `;
 const NameChannel = styled.div`
@@ -295,6 +325,7 @@ const NameChannel = styled.div`
 
   input {
     height: 30px;
+    width: 300px;
     border: 1px solid lightgray;
     border-radius: 5px;
   }
@@ -310,6 +341,7 @@ const Topic = styled.div`
 
   input {
     height: 30px;
+    width: 300px;
     border: 1px solid lightgray;
     border-radius: 5px;
   }
