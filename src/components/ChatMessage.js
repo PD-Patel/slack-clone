@@ -4,28 +4,8 @@ import { useStateValue } from "../StateProvider";
 function ChatMessage({ name, message, avatar, timestamp, file, videos }) {
   const [theme] = useStateValue();
 
-  const Container = styled.div`
-    display: flex;
-    flex-direction: column;
-    margin-top: 20px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    padding-left: 20px;
-    margin-bottom: 20px;
-    padding-right: 20px;
-
-    color: ${theme.theme === "dark" ? "white" : "black"};
-    :hover {
-      background-color: ${theme.theme === "dark" ? "#222529" : "#F8F8F8"};
-    }
-  `;
-
-  const MessageData = styled.div`
-    display: flex;
-    align-items: flex-start;
-  `;
   return (
-    <Container>
+    <Container theme={theme.theme}>
       <MessageData>
         <UserAvatar>
           <img src={avatar} alt="" />
@@ -64,6 +44,28 @@ function ChatMessage({ name, message, avatar, timestamp, file, videos }) {
 }
 
 export default ChatMessage;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 20px;
+  margin-bottom: 20px;
+  padding-right: 20px;
+
+  color: ${(props) => (props.theme === "dark" ? "white" : "black")};
+  :hover {
+    background-color: ${(props) =>
+      props.theme === "dark" ? "#222529" : "#F8F8F8"};
+  }
+`;
+
+const MessageData = styled.div`
+  display: flex;
+  align-items: flex-start;
+`;
 
 const UserAvatar = styled.div`
   width: 36px;

@@ -7,7 +7,9 @@ import "./App.css";
 import Sidebar from "./components/Sidebar";
 import db, { auth } from "./firebase";
 import { useEffect, useState } from "react";
+import { useStateValue } from "./StateProvider";
 function App() {
+  const [theme] = useStateValue();
   const [rooms, setRooms] = useState([]);
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
 
@@ -31,8 +33,6 @@ function App() {
     getChannels();
   }, []);
 
-  console.log("user>>>", user);
-
   return (
     <div className="App">
       <Router>
@@ -49,7 +49,19 @@ function App() {
                   <Chat user={user} />
                 </Route>
                 <Route path="/">
-                  <div className="select__channel">
+                  <div
+                    className="select__channel"
+                    style={{
+                      backgroundColor:
+                        theme.theme === "dark"
+                          ? "rgb(26, 29, 33)"
+                          : theme.theme === "crystal"
+                          ? "white"
+                          : "white",
+
+                      color: theme.theme === "dark" ? "white" : "black",
+                    }}
+                  >
                     <p id="title__to__select">Select or Create Channel</p>
                   </div>
                 </Route>

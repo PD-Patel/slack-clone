@@ -41,96 +41,8 @@ function Sidebar({ rooms }) {
     setTopic("");
     setAddChannelDialog(false);
   };
-  const MainChannelItem = styled.div`
-    color: ${theme.theme === "ochin"
-      ? "white"
-      : theme.theme === "dark"
-      ? "white"
-      : theme.theme === "crystal"
-      ? "black"
-      : theme.theme === "sweettreat"
-      ? "#4A154B"
-      : "rgb(188, 171, 188)"};
-    display: grid;
-    grid-template-columns: 15% auto;
-    height: 28px;
-    align-items: center;
-    padding-left: 19px;
-    cursor: pointer;
-    cursor: pointer;
-    :hover {
-      background: ${theme.theme === "ochin"
-        ? "#6698C8"
-        : theme.theme === "dark"
-        ? "#1264A3"
-        : theme.theme === "crystal"
-        ? "white"
-        : theme.theme === "sweettreat"
-        ? "#FFFFFF"
-        : "#350D36"};
-    }
-  `;
+
   // rgba(21,24,52,0.1)
-
-  const Channel = styled.div`
-    height: 28px;
-    display: flex;
-    align-items: center;
-    padding-left: 19px;
-    justify-content: space-between;
-    cursor: pointer;
-
-    p {
-      margin-top: 10px;
-    }
-    :hover {
-      background: ${theme.theme === "ochin"
-        ? "#6698C8"
-        : theme.theme === "dark"
-        ? "#1264A3"
-        : theme.theme === "crystal"
-        ? "white"
-        : theme.theme === "sweettreat"
-        ? "#FFFFFF"
-        : "#350D36"};
-    }
-
-    .MuiSvgIcon-root {
-      cursor: pointer;
-      margin-right: 10px !important;
-    }
-  `;
-
-  const ChannelsList = styled.div`
-    color: ${theme.theme === "ochin"
-      ? "white"
-      : theme.theme === "dark"
-      ? "white"
-      : theme.theme === "crystal"
-      ? "black"
-      : theme.theme === "sweettreat"
-      ? "#4A154B"
-      : "rgb(188, 171, 188)"};
-  `;
-
-  const NewChannelContainer = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 28px;
-    padding-left: 19px;
-    padding-right: 12px;
-
-    color: ${theme.theme === "ochin"
-      ? "white"
-      : theme.theme === "dark"
-      ? "white"
-      : theme.theme === "crystal"
-      ? "black"
-      : theme.theme === "sweettreat"
-      ? "#4A154B"
-      : "rgb(188, 171, 188)"};
-  `;
 
   return (
     <Container
@@ -228,19 +140,15 @@ function Sidebar({ rooms }) {
 
       <MainChannels>
         {sidebarItems?.map((item) => (
-          <MainChannelItem>
+          <MainChannelItem theme={theme.theme}>
             {item.icon}
             {item.text}
           </MainChannelItem>
         ))}
-        <MainChannelItem>
-          <AddCircleOutlineIcon />
-          Add
-        </MainChannelItem>
       </MainChannels>
 
       <ChannelsContainer>
-        <NewChannelContainer>
+        <NewChannelContainer theme={theme.theme}>
           <div>Channels</div>
           <AddIcon
             onClick={() => setAddChannelDialog(!addChannelDialog)}
@@ -248,9 +156,9 @@ function Sidebar({ rooms }) {
           />
         </NewChannelContainer>
 
-        <ChannelsList>
+        <ChannelsList theme={theme.theme}>
           {rooms?.map((channel) => (
-            <Channel>
+            <Channel theme={theme.theme}>
               <p onClick={() => goToChannel(channel.id)}># {channel.name}</p>
               <DeleteIcon onClick={() => deleteChannel(channel.id)} />
             </Channel>
@@ -277,6 +185,104 @@ const WorkspacContainer = styled.div`
   justify-content: space-between;
   border-bottom: 1px solid #532753;
 `;
+
+const MainChannelItem = styled.div`
+  color: ${(props) =>
+    props.theme === "ochin"
+      ? "white"
+      : props.theme === "dark"
+      ? "white"
+      : props.theme === "crystal"
+      ? "black"
+      : props.theme === "sweettreat"
+      ? "#4A154B"
+      : "rgb(188, 171, 188)"};
+  display: grid;
+  grid-template-columns: 15% auto;
+  height: 28px;
+  align-items: center;
+  padding-left: 19px;
+  cursor: pointer;
+  cursor: pointer;
+  :hover {
+    background: ${(props) =>
+      props.theme === "ochin"
+        ? "#6698C8"
+        : props.theme === "dark"
+        ? "#1264A3"
+        : props.theme === "crystal"
+        ? "white"
+        : props.theme === "sweettreat"
+        ? "#FFFFFF"
+        : "#350D36"};
+  }
+`;
+
+const Channel = styled.div`
+  height: 28px;
+  display: flex;
+  align-items: center;
+  padding-left: 19px;
+  justify-content: space-between;
+  cursor: pointer;
+
+  p {
+    margin-top: 13px;
+
+    width: 215px;
+  }
+  :hover {
+    background: ${(props) =>
+      props.theme === "ochin"
+        ? "#6698C8"
+        : props.theme === "dark"
+        ? "#1264A3"
+        : props.theme === "crystal"
+        ? "white"
+        : props.theme === "sweettreat"
+        ? "#FFFFFF"
+        : "#350D36"};
+  }
+
+  .MuiSvgIcon-root {
+    cursor: pointer;
+    margin-right: 10px !important;
+  }
+`;
+
+const ChannelsList = styled.div`
+  color: ${(props) =>
+    props.theme === "ochin"
+      ? "white"
+      : props.theme === "dark"
+      ? "white"
+      : props.theme === "crystal"
+      ? "black"
+      : props.theme === "sweettreat"
+      ? "#4A154B"
+      : "rgb(188, 171, 188)"};
+`;
+
+const NewChannelContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 28px;
+  padding-left: 19px;
+  padding-right: 12px;
+
+  color: ${(props) =>
+    props.theme === "ochin"
+      ? "white"
+      : props.theme === "dark"
+      ? "white"
+      : props.theme === "crystal"
+      ? "black"
+      : props.theme === "sweettreat"
+      ? "#4A154B"
+      : "rgb(188, 171, 188)"};
+`;
+
 const Name = styled.div``;
 const NewMessage = styled.div`
   color: #3f0e40;

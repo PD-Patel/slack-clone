@@ -12,13 +12,13 @@ import { storage } from "../firebase";
 
 function ChatInput({ sendMessage }) {
   const [theme] = useStateValue();
-
   const [emojiBoxOpen, setEmojiBoxOpen] = useState(false);
   const [attachOpen, setAttachOpen] = useState(false);
   const [videoUrl, setVideoUrl] = useState([]);
   const [fileUrl, setFileUrl] = useState([]);
   const [disable, setDisable] = useState(false);
   const [uploading, setUploading] = useState(false);
+
   const [messageData, setMessageData] = useState({
     message: "",
     files: [],
@@ -26,7 +26,8 @@ function ChatInput({ sendMessage }) {
   });
   const onEmojiClick = (event, emojiObject) => {
     setMessageData({
-      message: messageData.message + emojiObject.emoji,
+      message: messageData.message.concat(emojiObject.emoji),
+
       files: fileUrl,
       videos: videoUrl,
     });
@@ -69,7 +70,7 @@ function ChatInput({ sendMessage }) {
 
   const onfileChange = async (e) => {
     const file = e.target.files[0];
-    console.log(file);
+
     setDisable(true);
     setUploading(true);
     if (
@@ -115,42 +116,13 @@ function ChatInput({ sendMessage }) {
 
   // Attached Images
 
-  const InputContainer = styled.div`
-    border-radius: 4px;
-    margin-top: 10px;
-
-    form {
-      display: flex;
-      flex-direction: column;
-      height: fit-content;
-      padding-bottom: 10px;
-      border-bottom: 1px solid lightgray;
-
-      input {
-        flex: 1;
-        border: none;
-        font-size: 15px;
-        font-variant: none;
-        line-height: 22px;
-        text-decoration: rgb(29, 28, 29);
-        text-align: left;
-        white-space: pre-wrap;
-        word-spacing: 0px;
-        background-color: transparent;
-        color: ${theme.theme === "dark" ? "white" : "black"};
-
-        ::placeholder {
-          color: ${theme.theme === "dark" ? "lightblue" : "#051a5f"};
-          font-weight: 500;
-          font-size: 14px;
-        }
-      }
-
-      input:focus {
-        outline: none;
-      }
-    }
-  `;
+  const handleChange = (e) => {
+    setMessageData({
+      message: e.target.value,
+      files: fileUrl,
+      videos: videoUrl,
+    });
+  };
   return (
     <Container>
       {emojiBoxOpen && <Picker onEmojiClick={onEmojiClick}></Picker>}
@@ -168,21 +140,20 @@ function ChatInput({ sendMessage }) {
           }}
         ></input>
       )}
-      <InputContainer>
-        <form onSubmit={send}>
+
+      <InputContainer theme={theme.theme}>
+        <form>
           <input
-            type="text"
-            placeholder="Send a message"
-            onChange={(e) =>
-              setMessageData({
-                message: e.target.value,
-                files: fileUrl,
-                videos: videoUrl,
-              })
-            }
             value={messageData.message}
-          ></input>
-          {uploading && <p>The File is uploading</p>}
+            type="text"
+            onChange={handleChange}
+            placeholder="Send Message Here...."
+          />
+          {uploading && (
+            <p style={{ color: theme.theme === "dark" ? "white" : "black" }}>
+              The File is uploading
+            </p>
+          )}
 
           {fileUrl.length > 0 && (
             <AttachFiles>
@@ -274,6 +245,7 @@ const Content = styled.div`
   width: 100px;
   border: 1px solid lightgray;
   margin-right: 5px;
+
   img {
     width: 100%;
   }
@@ -387,4 +359,41 @@ const AttachButton = styled.div`
 `;
 const Attach = styled(AttachFileIcon)`
   color: gray;
+`;
+const InputContainer = styled.div`
+  border-radius: 4px;
+  margin-top: 10px;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+    padding-bottom: 10px;
+    border-bottom: 1px solid lightgray;
+
+    input {
+      flex: 1;
+      border: none;
+      font-size: 15px;
+      font-variant: none;
+      line-height: 22px;
+      text-decoration: rgb(29, 28, 29);
+      text-align: left;
+      white-space: pre-wrap;
+      word-spacing: 0px;
+      background-color: transparent;
+
+      color: ${(props) => (props.theme === "dark" ? "white" : "black")};
+
+      ::placeholder {
+        color: ${(props) => (props.theme === "dark" ? "lightblue" : "#051a5f")};
+        font-weight: 500;
+        font-size: 14px;
+      }
+    }
+
+    input:focus {
+      outline: none;
+    }
+  }
 `;
